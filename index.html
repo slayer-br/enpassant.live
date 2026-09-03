@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Acompanhe mestres e criadores de conteúdo de xadrez ao vivo na Twitch em tempo real." />
+    <meta name="theme-color" content="#0d1117" />
+    <link rel="icon" type="image/svg+xml" href="/enpassant.live/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet" />
+    <title>EnPassant.live — Chess Streamers</title>
+    <script>
+      (function () {
+        try {
+          var STORAGE_KEY = 'enpassant-theme';
+          var savedTheme = localStorage.getItem(STORAGE_KEY);
+          var theme = 'dark';
+          if (savedTheme === 'dark' || savedTheme === 'light') {
+            theme = savedTheme;
+          } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+            theme = 'light';
+          }
+          document.documentElement.setAttribute('data-theme', theme);
+          var metaThemeColor = document.querySelector('meta[name="theme-color"]');
+          if (metaThemeColor) {
+            metaThemeColor.setAttribute('content', theme === 'light' ? '#f6f8fa' : '#0d1117');
+          }
+        } catch (e) {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        }
+      })();
+    </script>
+    <script type="module" crossorigin src="/enpassant.live/assets/index-D9DJwtQm.js"></script>
+    <link rel="stylesheet" crossorigin href="/enpassant.live/assets/index-C3-TgpFa.css">
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>
