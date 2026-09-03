@@ -26,6 +26,36 @@ const getInitialTheme = () => {
   return 'dark';
 };
 
+const sortStreamers = (list) => {
+  if (!Array.isArray(list)) return [];
+
+  return [...list].sort((a, b) => {
+    const isLiveA = a.is_live === true;
+    const isLiveB = b.is_live === true;
+
+    if (isLiveA && !isLiveB) return -1;
+    if (!isLiveA && isLiveB) return 1;
+
+    const nameA = String(a.username || '');
+    const nameB = String(b.username || '');
+
+    const comparison = nameA.localeCompare(
+      nameB,
+      'pt-BR',
+      {
+        sensitivity: 'base',
+        numeric: true
+      }
+    );
+
+    if (comparison === 0) {
+      return nameA.localeCompare(nameB, 'pt-BR');
+    }
+
+    return comparison;
+  });
+};
+
 function App() {
   const [theme, setTheme] = useState(getInitialTheme);
   const [streamers, setStreamers] = useState([]);
@@ -82,7 +112,8 @@ function App() {
       }
       const data = await response.json();
       const streamersList = Array.isArray(data.streamers) ? data.streamers : [];
-      setStreamers(streamersList);
+      const sortedStreamers = sortStreamers(streamersList);
+      setStreamers(sortedStreamers);
       setCurrentPage(1);
     } catch (err) {
       if (err.name !== 'AbortError') {
