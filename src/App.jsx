@@ -9,12 +9,68 @@ import './App.css';
 
 const ITEMS_PER_PAGE = 12;
 const API_URL = 'https://api.chess.com/pub/streamers';
+const THEME_STORAGE_KEY = 'enpassant-theme';
+
+const getInitialTheme = () => {
+  try {
+    const savedTheme = localStorage.getItem(THEME_STORAGE_KEY);
+    if (savedTheme === 'dark' || savedTheme === 'light') {
+      return savedTheme;
+    }
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+      return 'light';
+    }
+  } catch (e) {
+    console.warn('Erro ao acessar localStorage:', e);
+  }
+  return 'dark';
+};
 
 function App() {
+  const [theme, setTheme] = useState(getInitialTheme);
   const [streamers, setStreamers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
+
+  const toggleTheme = () => {
+    setTheme((prevTheme) => {
+      const nextTheme = prevTheme === 'dark' ? 'light' : 'dark';
+      try {
+        localStorage.setItem(THEME_STORAGE_KEY, nextTheme);
+      } catch (e) {
+        console.warn('Falha ao salvar tema no localStorage:', e);
+      }
+      return nextTheme;
+    });
+  };
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    const metaThemeColor = document.querySelector('meta[name="theme-color"]');
+    if (metaThemeColor) {
+      metaThemeColor.setAttribute('content', theme === 'light' ? '#f6f8fa' : '#0d1117');
+    }
+  }, [theme]);
+
+  useEffect(() => {
+    if (!window.matchMedia) return;
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+
+    const handleSystemChange = (e) => {
+      try {
+        const saved = localStorage.getItem(THEME_STORAGE_KEY);
+        if (!saved) {
+          setTheme(e.matches ? 'dark' : 'light');
+        }
+      } catch (err) {
+        console.warn('Erro ao verificar preferencia do sistema:', err);
+      }
+    };
+
+    mediaQuery.addEventListener('change', handleSystemChange);
+    return () => mediaQuery.removeEventListener('change', handleSystemChange);
+  }, []);
 
   const fetchStreamers = useCallback(async (signal) => {
     setLoading(true);
@@ -74,7 +130,12 @@ function App() {
 
   return (
     <div className="app-container">
-      <Header liveCount={liveCount} totalCount={totalCount} />
+      <Header
+        liveCount={liveCount}
+        totalCount={totalCount}
+        theme={theme}
+        onToggleTheme={toggleTheme}
+      />
 
       <main className="main-content">
         {loading && <LoadingState />}
