@@ -2,6 +2,8 @@
 
 Aplicação web em React para acompanhamento de streamers de xadrez, consumindo a API pública oficial do [Chess.com](https://www.chess.com) e realizando atualização periódica dos dados.
 
+🔗 **Acesse a aplicação:** [https://slayer-br.github.io/enpassant.live/](https://slayer-br.github.io/enpassant.live/)
+
 ---
 
 ## Preview
