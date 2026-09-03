@@ -6,13 +6,13 @@ Aplicação web em React para acompanhamento de streamers de xadrez, consumindo 
 
 ## Preview
 
-![EnPassant.live - Modo Escuro](./src/public/enpassant01.jpg)
+![EnPassant.live - Modo Escuro](./public/enpassant01.jpg)
 *Interface principal no Modo Escuro com listagem de streamers e filtros de status.*
 
-![EnPassant.live - Modo Claro](./src/public/enpassant02.jpg)
+![EnPassant.live - Modo Claro](./public/enpassant02.jpg)
 *Interface no Modo Claro com Design Tokens de alto contraste.*
 
-![EnPassant.live - Busca e Filtros](./src/public/enpassant03.jpg)
+![EnPassant.live - Busca e Filtros](./public/enpassant03.jpg)
 *Busca por username combinada com filtros de status e paginação inteligente.*
 
 ---
@@ -160,6 +160,11 @@ enpassant.live/
 │       ├── 00006-paginacao-inteligente-streamers.md
 │       ├── 00007-busca-streamers.md
 │       └── 00008-filtros-status-streamers.md
+├── public/                     # Arquivos estáticos servidos na raiz
+│   ├── enpassant01.jpg         # Screenshot do Modo Escuro
+│   ├── enpassant02.jpg         # Screenshot do Modo Claro
+│   ├── enpassant03.jpg         # Screenshot de Busca e Filtros
+│   └── favicon.svg             # Favicon vetorial da aplicação
 ├── src/
 │   ├── assets/                 # SVGs e recursos visuais estáticos
 │   │   └── chess-avatar-placeholder.svg
@@ -172,10 +177,6 @@ enpassant.live/
 │   │   ├── SearchBar.jsx       # Campo de busca com botão de limpeza
 │   │   ├── StreamerCard.jsx    # Card individual do streamer
 │   │   └── StreamerGrid.jsx    # Grade de cards
-│   ├── public/                 # Screenshots da aplicação
-│   │   ├── enpassant01.jpg
-│   │   ├── enpassant02.jpg
-│   │   └── enpassant03.jpg
 │   ├── App.css                 # Estilos globais e componentes
 │   ├── App.jsx                 # Componente raiz, estado central e pipeline de dados
 │   ├── index.css               # Design tokens, reset e tipografia
