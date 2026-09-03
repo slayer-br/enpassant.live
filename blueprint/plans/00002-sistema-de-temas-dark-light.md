@@ -3,7 +3,7 @@
 **Plano:** 00002  
 **Status:** Revisado / Pronto para Implementação  
 **Data:** 2026-09-03  
-**Referência:** PRD — EnPassant.live (`blueprint/docs/prd.md`), Plano 00001 (`blueprint/plans/00001-plano-implementacao.md`) & Base de Código Real do Projeto  
+**Referência:** PRD — EnPassant.live (`blueprint/docs/prd.md`), Plano 00001 (`blueprint/plans/00001-implementacao-inicial-do-mvp.md`) & Base de Código Real do Projeto  
 
 ---
 
@@ -691,7 +691,7 @@ git commit -m "test(theme): validar matriz de testes e criterios de aceite do si
 | `src/App.css` | Modificar | Desacoplar cores fixas, estilizar `.theme-toggle-btn` e refinar tema claro |
 | `src/App.jsx` | Modificar | Gerenciar estado `theme`, lazy init, persistência, listeners de SO e repassar props |
 | `src/components/Header.jsx` | Modificar | Receber `theme` e `onToggleTheme`, renderizar botão acessível com SVG |
-| `blueprint/plans/00002-plano-implementacao.md` | Manter/Atualizar | Documento técnico oficial do Plano de Implementação 00002 |
+| `blueprint/plans/00002-sistema-de-temas-dark-light.md` | Manter/Atualizar | Documento técnico oficial do Plano de Implementação 00002 |
 
 ---
 
