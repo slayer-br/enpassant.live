@@ -6,7 +6,14 @@ Aplicação web em React para acompanhamento de streamers de xadrez, consumindo 
 
 ## Preview
 
-*Capturas de tela e demonstração visual da aplicação nos modos Claro e Escuro.*
+![EnPassant.live - Modo Escuro](./src/public/enpassant01.jpg)
+*Interface principal no Modo Escuro com listagem de streamers e filtros de status.*
+
+![EnPassant.live - Modo Claro](./src/public/enpassant02.jpg)
+*Interface no Modo Claro com Design Tokens de alto contraste.*
+
+![EnPassant.live - Busca e Filtros](./src/public/enpassant03.jpg)
+*Busca por username combinada com filtros de status e paginação inteligente.*
 
 ---
 
@@ -165,6 +172,10 @@ enpassant.live/
 │   │   ├── SearchBar.jsx       # Campo de busca com botão de limpeza
 │   │   ├── StreamerCard.jsx    # Card individual do streamer
 │   │   └── StreamerGrid.jsx    # Grade de cards
+│   ├── public/                 # Screenshots da aplicação
+│   │   ├── enpassant01.jpg
+│   │   ├── enpassant02.jpg
+│   │   └── enpassant03.jpg
 │   ├── App.css                 # Estilos globais e componentes
 │   ├── App.jsx                 # Componente raiz, estado central e pipeline de dados
 │   ├── index.css               # Design tokens, reset e tipografia
