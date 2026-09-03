@@ -10,10 +10,12 @@
   --accent-live-glow: rgba(63, 185, 80, 0.2);
   --accent-twitch: #9146ff;
   --accent-twitch-hover: #772ce8;
-  --accent-offline: #6e7681;
+  --accent-offline: #f87171;
+  --accent-offline-glow: rgba(248, 113, 113, 0.15);
   --accent-error: #f85149;
   --badge-live-bg: #0b2212;
-  --badge-offline-bg: #1c2128;
+  --badge-offline-bg: #2a1215;
+  --badge-offline-border: rgba(248, 113, 113, 0.4);
   --btn-disabled-bg: #21262d;
   --btn-disabled-color: #6e7681;
 
@@ -43,10 +45,12 @@
   --accent-live-glow: rgba(26, 127, 55, 0.15);
   --accent-twitch: #772ce8;
   --accent-twitch-hover: #5c16c5;
-  --accent-offline: #656d76;
+  --accent-offline: #cf222e;
+  --accent-offline-glow: rgba(207, 34, 46, 0.12);
   --accent-error: #cf222e;
   --badge-live-bg: #dafbe1;
-  --badge-offline-bg: #eaeef2;
+  --badge-offline-bg: #ffebe9;
+  --badge-offline-border: rgba(207, 34, 46, 0.35);
   --btn-disabled-bg: #eaeef2;
   --btn-disabled-color: #8c959f;
 

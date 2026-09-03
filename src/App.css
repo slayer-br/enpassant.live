@@ -121,8 +121,21 @@
   border-color: rgba(63, 185, 80, 0.4);
 }
 
+.badge-offline-count {
+  color: var(--accent-offline);
+  background-color: var(--accent-offline-glow);
+  border-color: var(--badge-offline-border);
+}
+
 .badge-total-count {
   color: var(--text-secondary);
+}
+
+.dot-offline {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--accent-offline);
 }
 
 .pulse-dot {
