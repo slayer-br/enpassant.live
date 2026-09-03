@@ -16,6 +16,8 @@ function Header({
   liveCount = 0,
   offlineCount = 0,
   totalCount = 0,
+  currentStatus = 'all',
+  onStatusChange,
   theme = 'dark',
   onToggleTheme,
   lastUpdated = null,
@@ -35,18 +37,42 @@ function Header({
       </div>
 
       <div className="header-actions">
-        <div className="header-badges">
-          <div className="badge badge-live-count">
+        <div
+          className="header-badges"
+          role="group"
+          aria-label="Filtrar streamers por status"
+        >
+          <button
+            type="button"
+            className={`badge badge-filter badge-total-count ${currentStatus === 'all' ? 'active' : ''}`}
+            onClick={() => onStatusChange && onStatusChange('all')}
+            aria-pressed={currentStatus === 'all'}
+            aria-label={`Filtrar por todos os streamers (${totalCount})`}
+          >
+            <span>TODOS {totalCount}</span>
+          </button>
+
+          <button
+            type="button"
+            className={`badge badge-filter badge-live-count ${currentStatus === 'live' ? 'active' : ''}`}
+            onClick={() => onStatusChange && onStatusChange('live')}
+            aria-pressed={currentStatus === 'live'}
+            aria-label={`Filtrar por streamers ao vivo (${liveCount})`}
+          >
             <span className="pulse-dot" aria-hidden="true"></span>
             <span>{liveCount} AO VIVO</span>
-          </div>
-          <div className="badge badge-offline-count">
+          </button>
+
+          <button
+            type="button"
+            className={`badge badge-filter badge-offline-count ${currentStatus === 'offline' ? 'active' : ''}`}
+            onClick={() => onStatusChange && onStatusChange('offline')}
+            aria-pressed={currentStatus === 'offline'}
+            aria-label={`Filtrar por streamers offline (${offlineCount})`}
+          >
             <span className="dot dot-offline" aria-hidden="true"></span>
             <span>{offlineCount} OFFLINE</span>
-          </div>
-          <div className="badge badge-total-count">
-            <span>{totalCount} STREAMERS</span>
-          </div>
+          </button>
         </div>
 
         {onToggleTheme && (

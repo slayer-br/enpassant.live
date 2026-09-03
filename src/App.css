@@ -115,6 +115,26 @@
   border: 1px solid var(--border-color);
 }
 
+/* ==========================================================================
+   Header Filter Badges (Plano 00008)
+   ========================================================================== */
+.badge-filter {
+  cursor: pointer;
+  user-select: none;
+  transition: all var(--transition-fast);
+  font-family: inherit;
+}
+
+.badge-filter:hover {
+  transform: translateY(-1px);
+  border-color: var(--text-secondary);
+}
+
+.badge-filter:focus-visible {
+  outline: 2px solid var(--accent-twitch);
+  outline-offset: 2px;
+}
+
 .badge-live-count {
   color: var(--accent-live);
   background-color: var(--accent-live-glow);
@@ -129,6 +149,34 @@
 
 .badge-total-count {
   color: var(--text-secondary);
+}
+
+/* Estado Ativo / Selecionado */
+.badge-total-count.active {
+  background-color: var(--text-primary);
+  color: var(--bg-primary);
+  border-color: var(--text-primary);
+}
+
+.badge-live-count.active {
+  background-color: var(--accent-live);
+  color: var(--bg-card);
+  border-color: var(--accent-live);
+}
+
+.badge-live-count.active .pulse-dot {
+  background-color: var(--bg-card);
+  box-shadow: 0 0 6px var(--bg-card);
+}
+
+.badge-offline-count.active {
+  background-color: var(--accent-offline);
+  color: var(--bg-card);
+  border-color: var(--accent-offline);
+}
+
+.badge-offline-count.active .dot-offline {
+  background-color: var(--bg-card);
 }
 
 .dot-offline {

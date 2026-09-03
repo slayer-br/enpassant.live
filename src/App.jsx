@@ -64,6 +64,7 @@ function App() {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [statusFilter, setStatusFilter] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [lastUpdated, setLastUpdated] = useState(null);
   const [secondsLeft, setSecondsLeft] = useState(300);
@@ -153,7 +154,6 @@ function App() {
         if (!isBackground) {
           setError('Não foi possível carregar os streamers. Verifique sua conexão e tente novamente.');
         } else {
-          // Erro em atualização em segundo plano: mantém os dados atuais e agenda retry para 60 segundos
           const retryTime = Date.now() + 60000;
           nextUpdateAtRef.current = retryTime;
           setSecondsLeft(60);
@@ -168,7 +168,6 @@ function App() {
     }
   }, []);
 
-  // Carga inicial e cleanup geral compatível com React StrictMode
   useEffect(() => {
     isFetchingRef.current = false;
     fetchStreamers(false);
@@ -181,7 +180,6 @@ function App() {
     };
   }, [fetchStreamers]);
 
-  // Timer anti-drift de 1 segundo
   useEffect(() => {
     if (!lastUpdated) return;
 
@@ -201,7 +199,6 @@ function App() {
     };
   }, [lastUpdated, fetchStreamers]);
 
-  // Listener para sincronização ao retornar de aba inativa (visibilitychange)
   useEffect(() => {
     const handleVisibilityChange = () => {
       if (document.visibilityState === 'visible' && nextUpdateAtRef.current && lastUpdated) {
@@ -224,10 +221,22 @@ function App() {
   const liveCount = streamers.filter((streamer) => streamer.is_live === true).length;
   const offlineCount = totalCount - liveCount;
 
+  const statusFiltered = statusFilter === 'all'
+    ? streamers
+    : streamers.filter((streamer) => {
+        if (statusFilter === 'live') {
+          return streamer.is_live === true;
+        }
+        if (statusFilter === 'offline') {
+          return streamer.is_live !== true;
+        }
+        return true;
+      });
+
   const normalizedSearch = searchTerm.trim().toLowerCase();
   const filteredStreamers = normalizedSearch === ''
-    ? streamers
-    : streamers.filter((streamer) =>
+    ? statusFiltered
+    : statusFiltered.filter((streamer) =>
         String(streamer.username || '').toLowerCase().includes(normalizedSearch)
       );
 
@@ -246,6 +255,12 @@ function App() {
       setCurrentPage(newPage);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
+  };
+
+  const handleStatusChange = (newStatus) => {
+    if (newStatus === statusFilter) return;
+    setStatusFilter(newStatus);
+    setCurrentPage(1);
   };
 
   const handleSearchChange = (newTerm) => {
@@ -272,6 +287,8 @@ function App() {
         liveCount={liveCount}
         offlineCount={offlineCount}
         totalCount={totalCount}
+        currentStatus={statusFilter}
+        onStatusChange={handleStatusChange}
         theme={theme}
         onToggleTheme={toggleTheme}
         lastUpdated={lastUpdated}
@@ -315,16 +332,35 @@ function App() {
                   </svg>
                 </div>
                 <h2 className="search-empty-title">Nenhum streamer encontrado</h2>
-                <p className="search-empty-text">
-                  Não encontramos nenhum streamer correspondente à busca &ldquo;{searchTerm}&rdquo;.
-                </p>
-                <button
-                  type="button"
-                  className="btn-search-reset"
-                  onClick={handleClearSearch}
-                >
-                  Limpar busca
-                </button>
+                {normalizedSearch !== '' ? (
+                  <>
+                    <p className="search-empty-text">
+                      Não encontramos nenhum streamer correspondente à busca &ldquo;{searchTerm}&rdquo; com o filtro atual.
+                    </p>
+                    <button
+                      type="button"
+                      className="btn-search-reset"
+                      onClick={handleClearSearch}
+                    >
+                      Limpar busca
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <p className="search-empty-text">
+                      {statusFilter === 'live'
+                        ? 'Nenhum streamer ao vivo no momento.'
+                        : 'Nenhum streamer offline no momento.'}
+                    </p>
+                    <button
+                      type="button"
+                      className="btn-search-reset"
+                      onClick={() => handleStatusChange('all')}
+                    >
+                      Ver todos os streamers
+                    </button>
+                  </>
+                )}
               </section>
             ) : (
               <>
