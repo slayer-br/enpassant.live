@@ -55,6 +55,12 @@ function App() {
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const currentStreamers = streamers.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(1);
+    }
+  }, [totalPages, currentPage]);
+
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= totalPages) {
       setCurrentPage(newPage);
