@@ -1,10 +1,11 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import Header from './components/Header.jsx';
 import LoadingState from './components/LoadingState.jsx';
 import ErrorState from './components/ErrorState.jsx';
 import EmptyState from './components/EmptyState.jsx';
 import StreamerGrid from './components/StreamerGrid.jsx';
 import Pagination from './components/Pagination.jsx';
+import SearchBar from './components/SearchBar.jsx';
 import './App.css';
 
 const ITEMS_PER_PAGE = 12;
@@ -63,6 +64,7 @@ function App() {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchTerm, setSearchTerm] = useState('');
   const [lastUpdated, setLastUpdated] = useState(null);
   const [secondsLeft, setSecondsLeft] = useState(300);
 
@@ -158,21 +160,23 @@ function App() {
         }
       }
     } finally {
-      isFetchingRef.current = false;
-      if (!controller.signal.aborted) {
+      if (abortControllerRef.current === controller) {
+        isFetchingRef.current = false;
         setLoading(false);
         setIsRefreshing(false);
       }
     }
   }, []);
 
-  // Carga inicial e cleanup geral
+  // Carga inicial e cleanup geral compatível com React StrictMode
   useEffect(() => {
+    isFetchingRef.current = false;
     fetchStreamers(false);
 
     return () => {
       if (abortControllerRef.current) {
         abortControllerRef.current.abort();
+        isFetchingRef.current = false;
       }
     };
   }, [fetchStreamers]);
@@ -220,9 +224,16 @@ function App() {
   const liveCount = streamers.filter((streamer) => streamer.is_live === true).length;
   const offlineCount = totalCount - liveCount;
 
-  const totalPages = Math.ceil(streamers.length / ITEMS_PER_PAGE) || 1;
+  const normalizedSearch = searchTerm.trim().toLowerCase();
+  const filteredStreamers = normalizedSearch === ''
+    ? streamers
+    : streamers.filter((streamer) =>
+        String(streamer.username || '').toLowerCase().includes(normalizedSearch)
+      );
+
+  const totalPages = Math.ceil(filteredStreamers.length / ITEMS_PER_PAGE) || 1;
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-  const currentStreamers = streamers.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  const currentStreamers = filteredStreamers.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
   useEffect(() => {
     if (currentPage > totalPages) {
@@ -235,6 +246,16 @@ function App() {
       setCurrentPage(newPage);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
+  };
+
+  const handleSearchChange = (newTerm) => {
+    setSearchTerm(newTerm);
+    setCurrentPage(1);
+  };
+
+  const handleClearSearch = () => {
+    setSearchTerm('');
+    setCurrentPage(1);
   };
 
   const handleRetry = () => {
@@ -270,12 +291,51 @@ function App() {
 
         {!loading && !error && streamers.length > 0 && (
           <>
-            <StreamerGrid streamers={currentStreamers} />
-            <Pagination
-              currentPage={currentPage}
-              totalPages={totalPages}
-              onPageChange={handlePageChange}
+            <SearchBar
+              value={searchTerm}
+              onChange={handleSearchChange}
+              onClear={handleClearSearch}
+              totalMatches={filteredStreamers.length}
             />
+
+            {filteredStreamers.length === 0 ? (
+              <section className="search-empty-state">
+                <div className="search-empty-icon" aria-hidden="true">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <circle cx="11" cy="11" r="8" />
+                    <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                    <line x1="8" y1="11" x2="14" y2="11" />
+                  </svg>
+                </div>
+                <h2 className="search-empty-title">Nenhum streamer encontrado</h2>
+                <p className="search-empty-text">
+                  Não encontramos nenhum streamer correspondente à busca &ldquo;{searchTerm}&rdquo;.
+                </p>
+                <button
+                  type="button"
+                  className="btn-search-reset"
+                  onClick={handleClearSearch}
+                >
+                  Limpar busca
+                </button>
+              </section>
+            ) : (
+              <>
+                <StreamerGrid streamers={currentStreamers} />
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={handlePageChange}
+                />
+              </>
+            )}
           </>
         )}
       </main>
