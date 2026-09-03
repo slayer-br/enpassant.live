@@ -264,13 +264,13 @@
 }
 
 .status-live {
-  background-color: #0b2212;
+  background-color: var(--badge-live-bg);
   color: var(--accent-live);
   border-color: var(--accent-live);
 }
 
 .status-offline {
-  background-color: #1c2128;
+  background-color: var(--badge-offline-bg);
   color: var(--accent-offline);
   border-color: var(--border-color);
 }
@@ -309,8 +309,8 @@
 }
 
 .btn-twitch.btn-disabled {
-  background-color: #21262d;
-  color: var(--accent-offline);
+  background-color: var(--btn-disabled-bg);
+  color: var(--btn-disabled-color);
   cursor: not-allowed;
   border: 1px solid var(--border-color);
 }
