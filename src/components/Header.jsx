@@ -1,9 +1,27 @@
+const formatLastUpdated = (timestamp) => {
+  if (!timestamp) return '';
+  const date = new Date(timestamp);
+  const datePart = date.toLocaleDateString('pt-BR');
+  const timePart = date.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+  return `Atualizado em ${datePart} às ${timePart}`;
+};
+
+const formatCountdown = (totalSeconds) => {
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+  return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+};
+
 function Header({
   liveCount = 0,
   offlineCount = 0,
   totalCount = 0,
   theme = 'dark',
   onToggleTheme,
+  lastUpdated = null,
+  secondsLeft = 300,
+  isRefreshing = false,
+  onRefresh,
 }) {
   return (
     <header className="app-header">
@@ -77,6 +95,44 @@ function Header({
           </button>
         )}
       </div>
+
+      {lastUpdated && (
+        <div className="sync-bar">
+          <div className="sync-info">
+            <span className="sync-timestamp">{formatLastUpdated(lastUpdated)}</span>
+            <span className="sync-separator" aria-hidden="true">•</span>
+            <span className="sync-countdown">
+              Próxima atualização em {formatCountdown(secondsLeft)}
+            </span>
+          </div>
+
+          {onRefresh && (
+            <button
+              type="button"
+              className="btn-sync-refresh"
+              onClick={onRefresh}
+              disabled={isRefreshing}
+              aria-label="Atualizar lista de streamers agora"
+              aria-busy={isRefreshing}
+              title="Atualizar lista de streamers agora"
+            >
+              <svg
+                className={`sync-icon ${isRefreshing ? 'is-spinning' : ''}`}
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67" />
+              </svg>
+              <span>{isRefreshing ? 'Atualizando...' : 'Atualizar agora'}</span>
+            </button>
+          )}
+        </div>
+      )}
     </header>
   );
 }

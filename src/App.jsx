@@ -60,8 +60,15 @@ function App() {
   const [theme, setTheme] = useState(getInitialTheme);
   const [streamers, setStreamers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [lastUpdated, setLastUpdated] = useState(null);
+  const [secondsLeft, setSecondsLeft] = useState(300);
+
+  const nextUpdateAtRef = useRef(null);
+  const isFetchingRef = useRef(false);
+  const abortControllerRef = useRef(null);
 
   const toggleTheme = () => {
     setTheme((prevTheme) => {
@@ -102,38 +109,112 @@ function App() {
     return () => mediaQuery.removeEventListener('change', handleSystemChange);
   }, []);
 
-  const fetchStreamers = useCallback(async (signal) => {
-    setLoading(true);
-    setError(null);
+  const fetchStreamers = useCallback(async (isBackground = false) => {
+    if (isFetchingRef.current) {
+      return;
+    }
+    isFetchingRef.current = true;
+
+    if (isBackground) {
+      setIsRefreshing(true);
+    } else {
+      setLoading(true);
+      setError(null);
+    }
+
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
+
     try {
-      const response = await fetch(API_URL, { signal });
+      const response = await fetch(API_URL, { signal: controller.signal });
       if (!response.ok) {
         throw new Error(`Erro na requisição: status ${response.status}`);
       }
       const data = await response.json();
       const streamersList = Array.isArray(data.streamers) ? data.streamers : [];
       const sortedStreamers = sortStreamers(streamersList);
+      
       setStreamers(sortedStreamers);
-      setCurrentPage(1);
+      const now = Date.now();
+      setLastUpdated(now);
+      nextUpdateAtRef.current = now + 300000;
+      setSecondsLeft(300);
+      setError(null);
+      if (!isBackground) {
+        setCurrentPage(1);
+      }
     } catch (err) {
       if (err.name !== 'AbortError') {
-        setError('Não foi possível carregar os streamers. Verifique sua conexão e tente novamente.');
+        if (!isBackground) {
+          setError('Não foi possível carregar os streamers. Verifique sua conexão e tente novamente.');
+        } else {
+          // Erro em atualização em segundo plano: mantém os dados atuais e agenda retry para 60 segundos
+          const retryTime = Date.now() + 60000;
+          nextUpdateAtRef.current = retryTime;
+          setSecondsLeft(60);
+        }
       }
     } finally {
-      if (!signal || !signal.aborted) {
+      isFetchingRef.current = false;
+      if (!controller.signal.aborted) {
         setLoading(false);
+        setIsRefreshing(false);
       }
     }
   }, []);
 
+  // Carga inicial e cleanup geral
   useEffect(() => {
-    const controller = new AbortController();
-    fetchStreamers(controller.signal);
+    fetchStreamers(false);
 
     return () => {
-      controller.abort();
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
     };
   }, [fetchStreamers]);
+
+  // Timer anti-drift de 1 segundo
+  useEffect(() => {
+    if (!lastUpdated) return;
+
+    const intervalId = setInterval(() => {
+      if (!nextUpdateAtRef.current) return;
+      const now = Date.now();
+      const remaining = Math.max(0, Math.ceil((nextUpdateAtRef.current - now) / 1000));
+      setSecondsLeft(remaining);
+
+      if (remaining === 0) {
+        fetchStreamers(true);
+      }
+    }, 1000);
+
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [lastUpdated, fetchStreamers]);
+
+  // Listener para sincronização ao retornar de aba inativa (visibilitychange)
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible' && nextUpdateAtRef.current && lastUpdated) {
+        const now = Date.now();
+        if (now >= nextUpdateAtRef.current) {
+          fetchStreamers(true);
+        } else {
+          setSecondsLeft(Math.max(0, Math.ceil((nextUpdateAtRef.current - now) / 1000)));
+        }
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [lastUpdated, fetchStreamers]);
 
   const totalCount = streamers.length;
   const liveCount = streamers.filter((streamer) => streamer.is_live === true).length;
@@ -157,7 +238,11 @@ function App() {
   };
 
   const handleRetry = () => {
-    fetchStreamers();
+    fetchStreamers(false);
+  };
+
+  const handleManualRefresh = () => {
+    fetchStreamers(true);
   };
 
   return (
@@ -168,6 +253,10 @@ function App() {
         totalCount={totalCount}
         theme={theme}
         onToggleTheme={toggleTheme}
+        lastUpdated={lastUpdated}
+        secondsLeft={secondsLeft}
+        isRefreshing={isRefreshing}
+        onRefresh={handleManualRefresh}
       />
 
       <main className="main-content">

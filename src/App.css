@@ -162,6 +162,75 @@
   }
 }
 
+.sync-bar {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  padding: 0.6rem 1rem;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  box-shadow: var(--shadow-sm);
+  margin-top: 0.5rem;
+}
+
+.sync-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.sync-separator {
+  color: var(--border-color);
+}
+
+.sync-countdown {
+  font-variant-numeric: tabular-nums;
+  font-weight: 500;
+}
+
+.btn-sync-refresh {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: var(--radius-sm);
+  background-color: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.btn-sync-refresh:hover:not(:disabled) {
+  background-color: var(--bg-card-hover);
+  border-color: var(--accent-twitch);
+  color: var(--accent-twitch);
+}
+
+.btn-sync-refresh:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.sync-icon {
+  width: 14px;
+  height: 14px;
+  transition: transform var(--transition-fast);
+}
+
+.sync-icon.is-spinning {
+  animation: spin 0.8s linear infinite;
+}
+
 /* ==========================================================================
    States (Loading, Error, Empty)
    ========================================================================== */
@@ -503,6 +572,19 @@
   .header-actions {
     width: 100%;
     justify-content: space-between;
+  }
+
+  .sync-bar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.6rem;
+    padding: 0.75rem;
+  }
+
+  .btn-sync-refresh {
+    width: 100%;
+    justify-content: center;
+    padding: 0.45rem 0.75rem;
   }
 
   .header-badges {
