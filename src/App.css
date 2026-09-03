@@ -325,7 +325,14 @@
 .status-offline {
   background-color: var(--badge-offline-bg);
   color: var(--accent-offline);
-  border-color: var(--border-color);
+  border-color: var(--badge-offline-border);
+}
+
+.dot-offline-sm {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--accent-offline);
 }
 
 .card-info {
@@ -496,6 +503,15 @@
   .header-actions {
     width: 100%;
     justify-content: space-between;
+  }
+
+  .header-badges {
+    gap: 0.5rem;
+  }
+
+  .badge {
+    padding: 0.4rem 0.75rem;
+    font-size: 0.8rem;
   }
 
   .streamer-grid {

@@ -31,7 +31,10 @@ function StreamerCard({ streamer }) {
               AO VIVO
             </>
           ) : (
-            'OFFLINE'
+            <>
+              <span className="dot dot-offline-sm" aria-hidden="true"></span>
+              OFFLINE
+            </>
           )}
         </span>
       </div>
