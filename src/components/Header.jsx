@@ -1,4 +1,10 @@
-function Header({ liveCount = 0, totalCount = 0, theme = 'dark', onToggleTheme }) {
+function Header({
+  liveCount = 0,
+  offlineCount = 0,
+  totalCount = 0,
+  theme = 'dark',
+  onToggleTheme,
+}) {
   return (
     <header className="app-header">
       <div className="header-brand">
@@ -15,6 +21,10 @@ function Header({ liveCount = 0, totalCount = 0, theme = 'dark', onToggleTheme }
           <div className="badge badge-live-count">
             <span className="pulse-dot" aria-hidden="true"></span>
             <span>{liveCount} AO VIVO</span>
+          </div>
+          <div className="badge badge-offline-count">
+            <span className="dot dot-offline" aria-hidden="true"></span>
+            <span>{offlineCount} OFFLINE</span>
           </div>
           <div className="badge badge-total-count">
             <span>{totalCount} STREAMERS</span>

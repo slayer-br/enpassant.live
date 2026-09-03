@@ -105,7 +105,8 @@ function App() {
   }, [fetchStreamers]);
 
   const totalCount = streamers.length;
-  const liveCount = streamers.filter((streamer) => streamer.is_live).length;
+  const liveCount = streamers.filter((streamer) => streamer.is_live === true).length;
+  const offlineCount = totalCount - liveCount;
 
   const totalPages = Math.ceil(streamers.length / ITEMS_PER_PAGE) || 1;
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
@@ -132,6 +133,7 @@ function App() {
     <div className="app-container">
       <Header
         liveCount={liveCount}
+        offlineCount={offlineCount}
         totalCount={totalCount}
         theme={theme}
         onToggleTheme={toggleTheme}
