@@ -96,6 +96,10 @@ function App() {
           </>
         )}
       </main>
+
+      <footer className="app-footer">
+        <p>Dados fornecidos pela API pública oficial do <a href="https://www.chess.com" target="_blank" rel="noopener noreferrer">Chess.com</a></p>
+      </footer>
     </div>
   );
 }
